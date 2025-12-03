@@ -30,7 +30,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbx7E2NYYjyvpDQOCbuAoPg38a9IJRS4YbqX80hA_T3tSueVC7jKhxSn5NqkAhBoKV1fuQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycby2RAq7pGTY43uKMqxWvhkOiYsMhyyI07yIEITY1m9_v_kCyqaPM2UrbwBgCIqMYmg-vg/exec";
     const MAX_ROWS = 30;
     let displayData = [];
 
