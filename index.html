@@ -129,7 +129,7 @@
         let gabungan = [...belumTerbayar, ...sudahTerbayar];
 
         gabungan = gabungan.filter(row => {
-          const noSPPD = (row["No SPPD"] ?? "").toString().trim();
+          const noSPPD = (row["No SPPD / Nama"] ?? "").toString().trim();
           return noSPPD !== "" && noSPPD !== "-" && noSPPD !== "0";
         });
 
@@ -155,7 +155,7 @@
         "Tanggal Pulang",
         "Tujuan",
         "Uraian",
-        "No SPPD",
+        "No SPPD / Nama",
         "Status SPJ",
         "Status Penyelesaian"
       ];
