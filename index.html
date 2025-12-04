@@ -179,23 +179,16 @@
         }
 
        allowedHeaders.forEach(header => {
-  const td = document.createElement("td");
-  let value = row[header] ?? "";
-  if (header.toLowerCase().includes("tanggal")) {
-    value = formatTanggal(value);
-  }
-
-  if (header === "No SPPD") {
-    const entries = value.split(/(?=\d{3}\.)/);
-    value = entries.map(e => e.trim()).join("<br>");
-    td.innerHTML = value;
-  } else {
-    td.textContent = value;
-  }
-
-  tr.appendChild(td);
-});
-
+          const td = document.createElement("td");
+          let value = row[header] ?? "";
+          if (header.toLowerCase().includes("tanggal")) {
+            value = formatTanggal(value);
+          }
+          td.textContent = value;
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
     }
 
     function highlightVisibleRow() {
