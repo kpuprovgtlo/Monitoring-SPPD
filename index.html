@@ -142,51 +142,63 @@
     }
 
     function renderTable(data) {
-      const table = document.getElementById("data-table");
-      table.innerHTML = "";
+  const table = document.getElementById("data-table");
+  table.innerHTML = "";
 
-      if (!data || data.length === 0) {
-        table.innerHTML = "<tr><td>Tidak ada data</td></tr>";
-        return;
+  if (!data || data.length === 0) {
+    table.innerHTML = "<tr><td>Tidak ada data</td></tr>";
+    return;
+  }
+
+  const allowedHeaders = [
+    "Tanggal Berangkat",
+    "Tanggal Pulang",
+    "Tujuan",
+    "Uraian",
+    "No SPPD / Nama",
+    "Status SPJ",
+    "Status Penyelesaian"
+  ];
+
+  const headerRow = document.createElement("tr");
+  allowedHeaders.forEach(header => {
+    const th = document.createElement("th");
+    th.textContent = header;
+    headerRow.appendChild(th);
+  });
+  table.appendChild(headerRow);
+
+  data.forEach(row => {
+    const tr = document.createElement("tr");
+    const status = norm(row["Status Penyelesaian"]);
+    if (status === "belum terbayar") {
+      tr.classList.add("belum");
+    }
+
+    allowedHeaders.forEach(header => {
+      const td = document.createElement("td");
+      let value = row[header] ?? "";
+
+      if (header.toLowerCase().includes("tanggal")) {
+        value = formatTanggal(value);
+        td.textContent = value;
+      } else if (header === "No SPPD / Nama") {
+        // Pisahkan berdasarkan pola nomor SPPD (3 digit + titik)
+        const entries = value.split(/(?=\d{3}\.)/);
+        const formatted = entries.map(e => e.trim()).join("<br>");
+        td.innerHTML = formatted;
+      } else {
+        td.textContent = value;
       }
 
-      const allowedHeaders = [
-        "Tanggal Berangkat",
-        "Tanggal Pulang",
-        "Tujuan",
-        "Uraian",
-        "No SPPD / Nama",
-        "Status SPJ",
-        "Status Penyelesaian"
-      ];
+      tr.appendChild(td);
+    });
 
-      const headerRow = document.createElement("tr");
-      allowedHeaders.forEach(header => {
-        const th = document.createElement("th");
-        th.textContent = header;
-        headerRow.appendChild(th);
-      });
-      table.appendChild(headerRow);
+    table.appendChild(tr);
+  });
+}
 
-      data.forEach(row => {
-        const tr = document.createElement("tr");
-        const status = norm(row["Status Penyelesaian"]);
-        if (status === "belum terbayar") {
-          tr.classList.add("belum");
-        }
 
-        allowedHeaders.forEach(header => {
-          const td = document.createElement("td");
-          let value = row[header] ?? "";
-          if (header.toLowerCase().includes("tanggal")) {
-            value = formatTanggal(value);
-          }
-          td.textContent = value;
-          tr.appendChild(td);
-        });
-        table.appendChild(tr);
-      });
-    }
 
     function highlightVisibleRow() {
       const container = document.getElementById("scroll-container");
