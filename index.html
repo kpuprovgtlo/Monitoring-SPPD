@@ -11,14 +11,26 @@
       background-color: #f9f9f9;
     }
 
-    h1 {
-      color: #444;
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 20px;
       margin: 0;
       background-color: #fff;
       border-bottom: 1px solid #ddd;
-      text-align: left;
+    }
+
+    .header-bar h1 {
+      margin: 0;
       font-size: 24px;
+      color: #444;
+    }
+
+    .status-box {
+      font-size: 16px;
+      color: #333;
+      text-align: right;
     }
 
     .table-wrap {
@@ -86,7 +98,11 @@
   </style>
 </head>
 <body>
-  <h1>MONITORING SPPD</h1>
+  <div class="header-bar">
+    <h1>MONITORING SPPD</h1>
+    <div id="status-summary" class="status-box"></div>
+  </div>
+
   <div class="table-wrap" id="scroll-container">
     <table id="data-table"></table>
   </div>
@@ -135,6 +151,16 @@
 
         displayData = gabungan.slice(0, MAX_ROWS);
 
+        // Hitung total status
+        const totalSPJBelum = gabungan.filter(row => norm(row["Status SPJ"]) === "belum diserahkan").length;
+        const totalPenyelesaianBelum = gabungan.filter(row => norm(row["Status Penyelesaian"]) === "belum terbayar").length;
+
+        const summaryElement = document.getElementById("status-summary");
+        summaryElement.innerHTML = `
+          SPJ Belum Diserahkan: <strong>${totalSPJBelum}</strong> |
+          Penyelesaian Belum Terbayar: <strong>${totalPenyelesaianBelum}</strong>
+        `;
+
         renderTable(displayData);
       } catch (error) {
         console.error("Gagal ambil data:", error);
@@ -142,63 +168,60 @@
     }
 
     function renderTable(data) {
-  const table = document.getElementById("data-table");
-  table.innerHTML = "";
+      const table = document.getElementById("data-table");
+      table.innerHTML = "";
 
-  if (!data || data.length === 0) {
-    table.innerHTML = "<tr><td>Tidak ada data</td></tr>";
-    return;
-  }
-
-  const allowedHeaders = [
-    "Tanggal Berangkat",
-    "Tanggal Pulang",
-    "Tujuan",
-    "Uraian",
-    "No SPPD / Nama",
-    "Status SPJ",
-    "Status Penyelesaian"
-  ];
-
-  const headerRow = document.createElement("tr");
-  allowedHeaders.forEach(header => {
-    const th = document.createElement("th");
-    th.textContent = header;
-    headerRow.appendChild(th);
-  });
-  table.appendChild(headerRow);
-
-  data.forEach(row => {
-    const tr = document.createElement("tr");
-    const status = norm(row["Status Penyelesaian"]);
-    if (status === "belum terbayar") {
-      tr.classList.add("belum");
-    }
-
-    allowedHeaders.forEach(header => {
-      const td = document.createElement("td");
-      let value = row[header] ?? "";
-
-      if (header.toLowerCase().includes("tanggal")) {
-        value = formatTanggal(value);
-        td.textContent = value;
-      } else if (header === "No SPPD / Nama") {
-        // Pisahkan berdasarkan pola nomor SPPD (3 digit + titik)
-        const entries = value.split(/(?=\d{3}\.)/);
-        const formatted = entries.map(e => e.trim()).join("<br>");
-        td.innerHTML = formatted;
-      } else {
-        td.textContent = value;
+      if (!data || data.length === 0) {
+        table.innerHTML = "<tr><td>Tidak ada data</td></tr>";
+        return;
       }
 
-      tr.appendChild(td);
-    });
+      const allowedHeaders = [
+        "Tanggal Berangkat",
+        "Tanggal Pulang",
+        "Tujuan",
+        "Uraian",
+        "No SPPD / Nama",
+        "Status SPJ",
+        "Status Penyelesaian"
+      ];
 
-    table.appendChild(tr);
-  });
-}
+      const headerRow = document.createElement("tr");
+      allowedHeaders.forEach(header => {
+        const th = document.createElement("th");
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
 
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        const status = norm(row["Status Penyelesaian"]);
+        if (status === "belum terbayar") {
+          tr.classList.add("belum");
+        }
 
+        allowedHeaders.forEach(header => {
+          const td = document.createElement("td");
+          let value = row[header] ?? "";
+
+          if (header.toLowerCase().includes("tanggal")) {
+            value = formatTanggal(value);
+            td.textContent = value;
+          } else if (header === "No SPPD / Nama") {
+            const entries = value.split(/(?=\d{3}\.)/);
+            const formatted = entries.map(e => e.trim()).join("<br>");
+            td.innerHTML = formatted;
+          } else {
+            td.textContent = value;
+          }
+
+          tr.appendChild(td);
+        });
+
+        table.appendChild(tr);
+      });
+    }
 
     function highlightVisibleRow() {
       const container = document.getElementById("scroll-container");
@@ -238,3 +261,4 @@
   </script>
 </body>
 </html>
+
