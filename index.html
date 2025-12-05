@@ -16,7 +16,6 @@
       justify-content: space-between;
       align-items: center;
       padding: 20px;
-      margin: 0;
       background-color: #fff;
       border-bottom: 1px solid #ddd;
     }
@@ -151,12 +150,10 @@
 
         displayData = gabungan.slice(0, MAX_ROWS);
 
-        // Hitung total status
         const totalSPJBelum = gabungan.filter(row => norm(row["Status SPJ"]) === "belum diserahkan").length;
         const totalPenyelesaianBelum = gabungan.filter(row => norm(row["Status Penyelesaian"]) === "belum terbayar").length;
 
-        const summaryElement = document.getElementById("status-summary");
-        summaryElement.innerHTML = `
+        document.getElementById("status-summary").innerHTML = `
           SPJ Belum Diserahkan: <strong>${totalSPJBelum}</strong> |
           SPPD Belum Dibayarkan: <strong>${totalPenyelesaianBelum}</strong>
         `;
@@ -209,7 +206,7 @@
             value = formatTanggal(value);
             td.textContent = value;
           } else if (header === "No SPPD / Nama") {
-            const entries = value.split(/(?=\d{3}\.)/);
+            const entries = value.split(/(?=\d{3}[.\s])/);
             const formatted = entries.map(e => e.trim()).join("<br>");
             td.innerHTML = formatted;
           } else {
@@ -257,16 +254,16 @@
 
     setInterval(fetchData, 10000);
 
-  fetchData().then(() => {
-  const container = document.getElementById("scroll-container");
-  container.scrollTop = 0;
-  highlightVisibleRow();
-  });
+    fetchData().then(() => {
+      const container = document.getElementById("scroll-container");
+      container.scrollTop = 0;
+      highlightVisibleRow();
+    });
 
-  setTimeout(() => {
-  setInterval(autoScroll, 40);
-  }, 1000); // jeda 1 detik sebelum scroll otomatis dimulai
-
+    setTimeout(() => {
+      setInterval(autoScroll, 40);
+    }, 10000); // jeda 10 detik sebelum scroll otomatis dimulai
   </script>
 </body>
 </html>
+
