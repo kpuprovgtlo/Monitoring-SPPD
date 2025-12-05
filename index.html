@@ -256,8 +256,17 @@
     }
 
     setInterval(fetchData, 10000);
-    fetchData();
-    setInterval(autoScroll, 30);
+
+  fetchData().then(() => {
+  const container = document.getElementById("scroll-container");
+  container.scrollTop = 0;
+  highlightVisibleRow();
+  });
+
+  setTimeout(() => {
+  setInterval(autoScroll, 30);
+  }, 1000); // jeda 1 detik sebelum scroll otomatis dimulai
+
   </script>
 </body>
 </html>
