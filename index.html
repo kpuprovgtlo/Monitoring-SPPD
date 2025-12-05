@@ -111,6 +111,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycby2RAq7pGTY43uKMqxWvhkOiYsMhyyI07yIEITY1m9_v_kCyqaPM2UrbwBgCIqMYmg-vg/exec";
     const MAX_ROWS = 30;
     let displayData = [];
+    let scrollStarted = false; // kontrol kapan scroll mulai
 
     function norm(s) {
       return (s ?? "").toString().toLowerCase().trim();
@@ -162,6 +163,10 @@
         `;
 
         renderTable(displayData);
+
+        // Tandai baris pertama aktif setelah data dimuat
+        setTimeout(highlightFirstRow, 500);
+
       } catch (error) {
         console.error("Gagal ambil data:", error);
       }
@@ -241,7 +246,17 @@
       }
     }
 
+    function highlightFirstRow() {
+      const container = document.getElementById("scroll-container");
+      const rows = container.querySelectorAll("tr:not(:first-child)");
+      if (rows.length > 0) {
+        rows.forEach(row => row.classList.remove("active"));
+        rows[0].classList.add("active");
+      }
+    }
+
     function autoScroll() {
+      if (!scrollStarted) return; // jangan scroll sebelum waktunya
       const container = document.getElementById("scroll-container");
       if (!container) return;
 
@@ -255,10 +270,15 @@
       highlightVisibleRow();
     }
 
+    // Refresh data tiap 10 detik
     setInterval(fetchData, 10000);
     fetchData();
-    setInterval(autoScroll, 30);
+
+    // Mulai scroll otomatis setelah 3 detik
+    setTimeout(() => {
+      scrollStarted = true;
+      setInterval(autoScroll, 30);
+    }, 3000);
   </script>
 </body>
 </html>
-
