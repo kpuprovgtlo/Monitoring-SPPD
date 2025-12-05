@@ -165,7 +165,7 @@
         renderTable(displayData);
 
         // Tandai baris pertama aktif setelah data dimuat
-        setTimeout(highlightFirstRow, 500);
+        highlightFirstRow();
 
       } catch (error) {
         console.error("Gagal ambil data:", error);
@@ -251,7 +251,7 @@
       const rows = container.querySelectorAll("tr:not(:first-child)");
       if (rows.length > 0) {
         rows.forEach(row => row.classList.remove("active"));
-        rows[0].classList.add("active");
+        rows[0].classList.add("active"); // baris pertama langsung aktif
       }
     }
 
@@ -277,8 +277,5 @@
     // Mulai scroll otomatis setelah 3 detik
     setTimeout(() => {
       scrollStarted = true;
-      setInterval(autoScroll, 60);
+      setInterval(autoScroll, 30);
     }, 3000);
-  </script>
-</body>
-</html>
